@@ -1,0 +1,13 @@
+.vs/
+src/**/obj/
+src/**/bin/**
+bin/
+obj/
+logs
+*.ncrunch*
+*.nupkg
+*.cache
+*.user
+
+# Docker secrets
+.env
