@@ -50,7 +50,7 @@ namespace HPlusSportsAPI
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hplus Sports");
             });
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
