@@ -1,11 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -25,6 +21,19 @@ namespace HPlusSportsAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Cosmos DB service initialized with config
+            IConfiguration dbConfig = Configuration.GetSection(Constants.KEY_DB_CONFIG);
+            services.Configure<Services.CosmosDBServiceOptions>(dbConfig);
+
+            //single doc client for performance
+            var docClient = new DocumentClient(
+                new Uri(Configuration[Constants.KEY_COSMOS_URI]),
+                Configuration[Constants.KEY_COSMOS_KEY]);
+            services.AddSingleton<DocumentClient>(docClient);
+
+            //Add storage service implementations
+            services.AddScoped<Services.IDocumentDBService, Services.CosmosDBService>();
+
             services.AddControllers();
             services.AddSwaggerGen(c => 
             {
@@ -50,7 +59,7 @@ namespace HPlusSportsAPI
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hplus Sports");
             });
-            //app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
 
             app.UseRouting();
 
