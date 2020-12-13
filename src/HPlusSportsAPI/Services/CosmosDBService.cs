@@ -50,7 +50,18 @@ namespace HPlusSportsAPI.Services
 
         public async Task AddImageToProductAsync(string id, string imageUri)
         {
+            var docUri = UriFactory.CreateDocumentUri(
+                dbName, collectionName, id);
 
+            var doc = await docClient.ReadDocumentAsync(
+                docUri, new RequestOptions
+                {
+                    PartitionKey = new PartitionKey(Undefined.Value)
+                });
+
+            doc.Resource.SetPropertyValue("image", imageUri);
+
+            await docClient.ReplaceDocumentAsync(doc);
         }
     }
 }

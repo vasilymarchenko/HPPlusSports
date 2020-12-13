@@ -33,6 +33,10 @@ namespace HPlusSportsAPI
 
             //Add storage service implementations
             services.AddScoped<Services.IDocumentDBService, Services.CosmosDBService>();
+            //services.AddScoped<Services.IQueueService, Services.AzureQueueService>();
+            //services.AddScoped<Services.ITableService, Services.AzureTableService>();
+            services.AddScoped<Services.IDocumentDBService, Services.CosmosDBService>();
+            services.AddScoped<Services.IBlobService, Services.AzureBlobService>();
 
             services.AddControllers();
             services.AddSwaggerGen(c => 
