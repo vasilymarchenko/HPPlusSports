@@ -39,13 +39,37 @@ namespace HPlusSportsAPI.Services
 
         public async Task<ProductBase> GetProductAsync(string id)
         {
-            //placeholder
-            return null;
+            var docUri = UriFactory.CreateDocumentUri(
+                dbName, collectionName, id);
+
+            Document doc = await docClient.ReadDocumentAsync(
+                docUri,
+                new RequestOptions
+                {
+                    PartitionKey = new PartitionKey(Undefined.Value)
+                });
+
+            if (doc.GetPropertyValue<string[]> ("Sizes") != null)
+            {
+                return (ClothingProduct)(dynamic)doc;
+            }
+
+            return (NutritionalProduct)(dynamic)doc;
         }
 
         public async Task<List<ProductBase>> GetProductsAsync()
         {
-            return new List<ProductBase>();
+            var productList = new List<ProductBase>();
+
+            var products = await docClient.ReadDocumentFeedAsync(
+                productCollectionUri);
+
+            foreach (var item in products)
+            {
+                productList.Add((ProductBase)item);
+            }
+
+            return productList;
         }
 
         public async Task AddImageToProductAsync(string id, string imageUri)

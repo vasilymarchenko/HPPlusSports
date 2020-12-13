@@ -1,24 +1,34 @@
-﻿@model HPlusSportsWeb.Models.Product
+﻿@model Newtonsoft.Json.Linq.JObject
 
 @{
-    ViewData["Title"] = Model.Name;
+    ViewData["Title"] = Model["name"];
 }
 
-
+<section class="default">
     <div class="product-detail">
-        <img class="product-image" src="@Model.Image" alt="@Model.ImageTitle" />
+        <img class="product-image" src="@Model["image"].ToString()" alt="@Model["name"].ToString()" />
         <div>
-            <h2 class="product-name">@Html.DisplayFor(model => model.Name)</h2>
+            <h2 class="product-name">@Model["name"].ToString()</h2>
 
-            <p class="product-description">@Html.DisplayFor(model => model.Description)</p>
-
-            <div class="product-button">
-                <button class="btn-primary" onclick="addToCart(@Model.ID, '@Model.Name' );">Add to cart</button>
+            <p class="product-description">@Model["description"].ToString()</p>
+            <div class="product-size">
+                <form>
+                    @if (Model.ContainsKey("sizes"))
+                    {
+                        @foreach (var size in Model["sizes"])
+                        {
+                            <label><input type="radio" name="size" value="@size" />@size</label>
+                        }
+                    }
+                    else
+                    {
+                        <input type="hidden" name="size" value="" />
+                    }
+                </form>
             </div>
-
+            <button class="btn-primary pull-right" onclick="addToCart('@Model["id"].ToString()', '@Model["name"].ToString()' );">Add to cart</button>
         </div>
     </div>
 
-    <a class="product-link" asp-action="Index">Back to Products</a>
-
-
+    <a asp-action="Index">Back to Products</a>
+</section>
