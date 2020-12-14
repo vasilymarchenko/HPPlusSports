@@ -14,6 +14,9 @@ namespace HPlusSportsAPI.Services
     /// </summary>
     public class AzureTableService : ITableService
     {
+
+        //TODO: how to store to the table
+
         IConfiguration config;
         string tableName, partitionName;
 
@@ -26,7 +29,19 @@ namespace HPlusSportsAPI.Services
 
         public async Task<List<OrderHistoryItem>> GetOrderHistoryAsync()
         {
-            return new List<OrderHistoryItem>();
+            CloudStorageAccount accnt = CloudStorageAccount.Parse(config[Constants.KEY_STORAGE_CNN]);
+
+            var tableClient = accnt.CreateCloudTableClient();
+            var table = tableClient.GetTableReference(tableName);
+
+            await table.CreateIfNotExistsAsync();
+            var historyQuery = new TableQuery<OrderHistoryItem>()
+                .Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, partitionName));
+
+            TableContinuationToken queryToken = null;
+            var tableItems = await table.ExecuteQuerySegmentedAsync<OrderHistoryItem>(historyQuery, queryToken);
+
+            return tableItems.ToList();
         }
     }
 }

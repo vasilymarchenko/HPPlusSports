@@ -5,10 +5,14 @@
 
 <section class="cart default">
     <h2>Your items</h2>
+
     <ul id="cartList"></ul>
 
     <div>
         <button onclick="submitOrder()" class="btn-primary">Place Order</button>
+    </div>
+    <div>
+        <a asp-controller="cart" asp-action="history">Order History</a>
     </div>
 </section>
 
